@@ -4,7 +4,9 @@ using System.Windows.Input;
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Dispatching;
 using Entregas.MAUI.Models;
+using Entregas.MAUI.Services; // Agregado para acceder a la BD
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Entregas.MAUI.ViewModels
 {
@@ -17,69 +19,59 @@ namespace Entregas.MAUI.ViewModels
 
         public HistorialViewModel()
         {
-            // Command to open comprobante (ComprobantePage expects query param "Entrega")
             ViewComprobanteCommand = new Command<EntregaModel>(async (entrega) =>
             {
                 if (entrega == null) return;
                 try
                 {
-                    var parametros = new Dictionary<string, object> { { "Entrega", entrega } };
-                    await Shell.Current.GoToAsync("ComprobantePage", parametros);
+                    var parametros = new Dictionary<string, object> { { "EntregaFirmada", entrega } };
+                    await Shell.Current.GoToAsync("ResumenEntregaPage", parametros);
                 }
-                catch
-                {
-                    // Silencioso en caso de error de navegación
-                }
+                catch { /* Silencioso en caso de error */ }
             });
 
-            // Simple refresh placeholder (could call a DB service if available)
-            RefreshCommand = new Command(() => { /* Implement refresh from DB if present */ });
+            RefreshCommand = new Command(async () => await CargarHistorialAsync());
 
-            // Subscribe to nuevas entregas para mantener el historial actualizado en tiempo real
+            // Mantenemos las suscripciones en vivo por si la app está abierta
             try
             {
-                MessagingCenter.Subscribe<CrearEntregaViewModel, EntregaModel>(this, "EntregaCreada", (sender, entrega) =>
+                MessagingCenter.Subscribe<CrearEntregaViewModel, EntregaModel>(this, "EntregaCreada", async (sender, entrega) =>
                 {
-                    MainThread.BeginInvokeOnMainThread(() =>
-                    {
-                        Entregas.Insert(0, entrega);
-                    });
+                    await CargarHistorialAsync();
                 });
 
-                // Escuchar entregas concretadas para agregarlas al historial
-                MessagingCenter.Subscribe<object, EntregaModel>(this, "EntregaConcretada", (sender, entrega) =>
+                MessagingCenter.Subscribe<object, EntregaModel>(this, "EntregaConcretada", async (sender, entrega) =>
                 {
-                    MainThread.BeginInvokeOnMainThread(() =>
-                    {
-                        if (entrega == null) return;
-
-                        // Evitar duplicados: buscar por Id
-                        var existe = Entregas.FirstOrDefault(e => e.Id == entrega.Id);
-                        if (existe == null)
-                        {
-                            // Solo agregar si está concretada (estado 2)
-                            if (entrega.Estado == 2)
-                                Entregas.Insert(0, entrega);
-                        }
-                        else
-                        {
-                            // actualizar datos del historial si ya existe
-                            existe.Estado = entrega.Estado;
-                            existe.FirmaBase64 = entrega.FirmaBase64;
-                            existe.Receptor = entrega.Receptor;
-                            existe.Observaciones = entrega.Observaciones;
-                            existe.Repartidor = entrega.Repartidor;
-                        }
-                    });
+                    await CargarHistorialAsync();
                 });
             }
-            catch
-            {
-                // MessagingCenter puede fallar en algunos entornos; no detener la app
-            }
+            catch { }
         }
 
-        // Llamar desde la página al cerrar para evitar memory leaks
+        // NUEVO: Método que consulta la BD y actualiza la lista
+        public async Task CargarHistorialAsync()
+        {
+            try
+            {
+                var entregasDb = await DatabaseService.ObtenerEntregasAsync();
+
+                // Filtramos solo las completadas (Estado == 2) y ordenamos por fecha (más recientes primero)
+                var completadas = entregasDb.Where(e => e.Estado == 2)
+                                            .OrderByDescending(e => e.FechaEntrega)
+                                            .ToList();
+
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    Entregas.Clear();
+                    foreach (var entrega in completadas)
+                    {
+                        Entregas.Add(entrega);
+                    }
+                });
+            }
+            catch { /* Ignorar si falla la carga inicial */ }
+        }
+
         public void Unsubscribe()
         {
             try
@@ -87,10 +79,7 @@ namespace Entregas.MAUI.ViewModels
                 MessagingCenter.Unsubscribe<CrearEntregaViewModel, EntregaModel>(this, "EntregaCreada");
                 MessagingCenter.Unsubscribe<object, EntregaModel>(this, "EntregaConcretada");
             }
-            catch
-            {
-                // ignorar
-            }
+            catch { }
         }
     }
 }

@@ -1,94 +1,115 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Entregas.MAUI.Views.ResumenEntregaPage"
              BackgroundColor="#D6B88B" 
              Title="Recibo Generado">
 
-    <!-- El fondo #D6B88B simula la tabla de madera/corcho detrás -->
-    <ScrollView>
-        <Border BackgroundColor="#FDFBF7" 
-                StrokeShape="RoundRectangle 5" 
-                Margin="15,20" 
-                Padding="20"
-                Stroke="Transparent">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="56"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-            <VerticalStackLayout Spacing="15">
+        <!-- Top-left back arrow button -->
+        <Button Grid.Row="0"
+                x:Name="BackButton"
+                Text="←"
+                FontSize="22"
+                BackgroundColor="Transparent"
+                TextColor="White"
+                HorizontalOptions="Start"
+                VerticalOptions="Center"
+                WidthRequest="48"
+                HeightRequest="48"
+                Margin="8,4,0,4"
+                Clicked="OnBackButtonClicked"/>
 
-                <!-- Encabezado MINUÉ -->
-                <Label Text="🐾 minué" FontSize="26" FontAttributes="Bold" TextColor="#4A6B4A" HorizontalOptions="Center"/>
-                <Label Text="COMPROBANTE DE ENTREGA" FontSize="18" FontAttributes="Bold" TextColor="#333333" HorizontalOptions="Center"/>
-                <BoxView HeightRequest="1" Color="#D3C5A3" Margin="40,0" />
+        <!-- Page content -->
+        <ScrollView Grid.Row="1">
+            <Border BackgroundColor="#FDFBF7" 
+                    StrokeShape="RoundRectangle 5" 
+                    Margin="15,20" 
+                    Padding="20"
+                    Stroke="Transparent">
 
-                <!-- Fecha y Punto de Entrega -->
-                <Border Stroke="#B3C5B3" StrokeThickness="1" StrokeShape="RoundRectangle 8" Padding="15,10">
-                    <Grid ColumnDefinitions="Auto, *">
-                        <Label Grid.Column="0" Text="📅 FECHA DE ENTREGA:" FontSize="12" TextColor="Gray" VerticalOptions="Center" WidthRequest="140"/>
-                        <Label Grid.Column="1" Text="{Binding FechaEntrega, StringFormat='{0:dd/MM/yyyy HH:mm}'}" FontSize="14" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
-                    </Grid>
-                </Border>
+                <VerticalStackLayout Spacing="15">
 
-                <Border Stroke="#B3C5B3" StrokeShape="RoundRectangle 8" Padding="15,10" StrokeDashArray="4,4">
-                    <Grid ColumnDefinitions="Auto, *">
-                        <Label Grid.Column="0" Text="📍 PUNTO DE ENTREGA:" FontSize="12" TextColor="Gray" VerticalOptions="Center" WidthRequest="140"/>
-                        <Label Grid.Column="1" Text="{Binding Destinatario}" FontSize="14" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
-                    </Grid>
-                </Border>
+                    <!-- Encabezado MINUÉ -->
+                    <Label Text="🐾 minué" FontSize="26" FontAttributes="Bold" TextColor="#4A6B4A" HorizontalOptions="Center"/>
+                    <Label Text="COMPROBANTE DE ENTREGA" FontSize="18" FontAttributes="Bold" TextColor="#333333" HorizontalOptions="Center"/>
+                    <BoxView HeightRequest="1" Color="#D3C5A3" Margin="40,0" />
 
-                <!-- Tabla de Productos -->
-                <Border Stroke="#4A6B4A" StrokeThickness="1" StrokeShape="RoundRectangle 8" Margin="0,10,0,0">
-                    <VerticalStackLayout>
-                        <!-- Cabecera Verde -->
-                        <Grid ColumnDefinitions="*, *" BackgroundColor="#4A6B4A" Padding="10">
-                            <Label Grid.Column="0" Text="🌱 PRODUCTO" TextColor="White" FontAttributes="Bold" HorizontalOptions="Center"/>
-                            <Label Grid.Column="1" Text="CANTIDAD (KG)" TextColor="White" FontAttributes="Bold" HorizontalOptions="Center"/>
+                    <!-- Fecha y Punto de Entrega -->
+                    <Border Stroke="#B3C5B3" StrokeThickness="1" StrokeShape="RoundRectangle 8" Padding="15,10">
+                        <Grid ColumnDefinitions="Auto, *">
+                            <Label Grid.Column="0" Text="📅 FECHA DE ENTREGA:" FontSize="12" TextColor="Gray" VerticalOptions="Center" WidthRequest="140"/>
+                            <Label Grid.Column="1" Text="{Binding FechaEntrega, StringFormat='{0:dd/MM/yyyy HH:mm}'}" FontSize="14" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
                         </Grid>
+                    </Border>
 
-                        <!-- Filas dinámicas -->
-                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Productos}">
-                            <BindableLayout.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid ColumnDefinitions="*, *" Padding="10">
-                                        <Label Grid.Column="0" Text="{Binding Nombre}" TextColor="Black" HorizontalOptions="Center"/>
-                                        <Label Grid.Column="1" Text="{Binding Cantidad, StringFormat='{0} kg'}" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
-                                    </Grid>
-                                </DataTemplate>
-                            </BindableLayout.ItemTemplate>
+                    <Border Stroke="#B3C5B3" StrokeShape="RoundRectangle 8" Padding="15,10" StrokeDashArray="4,4">
+                        <Grid ColumnDefinitions="Auto, *">
+                            <Label Grid.Column="0" Text="📍 PUNTO DE ENTREGA:" FontSize="12" TextColor="Gray" VerticalOptions="Center" WidthRequest="140"/>
+                            <Label Grid.Column="1" Text="{Binding Destinatario}" FontSize="14" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Tabla de Productos -->
+                    <Border Stroke="#4A6B4A" StrokeThickness="1" StrokeShape="RoundRectangle 8" Margin="0,10,0,0">
+                        <VerticalStackLayout>
+                            <!-- Cabecera Verde -->
+                            <Grid ColumnDefinitions="*, *" BackgroundColor="#4A6B4A" Padding="10">
+                                <Label Grid.Column="0" Text="🌱 PRODUCTO" TextColor="White" FontAttributes="Bold" HorizontalOptions="Center"/>
+                                <Label Grid.Column="1" Text="CANTIDAD (KG)" TextColor="White" FontAttributes="Bold" HorizontalOptions="Center"/>
+                            </Grid>
+
+                            <!-- Filas dinámicas -->
+                            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Productos}">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid ColumnDefinitions="*, *" Padding="10">
+                                            <Label Grid.Column="0" Text="{Binding Nombre}" TextColor="Black" HorizontalOptions="Center"/>
+                                            <Label Grid.Column="1" Text="{Binding Cantidad, StringFormat='{0} kg'}" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </VerticalStackLayout>
                         </VerticalStackLayout>
-                    </VerticalStackLayout>
-                </Border>
+                    </Border>
 
-                <Border Stroke="LightGray" StrokeShape="RoundRectangle 8" Padding="15,10" Margin="0,15,0,0">
-                    <Grid ColumnDefinitions="Auto, *">
-                        <Label Grid.Column="0" Text="📝 OBSERVACIONES:" FontSize="12" TextColor="Gray" VerticalOptions="Center" WidthRequest="130"/>
-                        <Label Grid.Column="1" Text="{Binding Observaciones}" FontSize="14" TextColor="Black" FontAttributes="Italic" HorizontalOptions="Center"/>
-                    </Grid>
-                </Border>
+                    <Border Stroke="LightGray" StrokeShape="RoundRectangle 8" Padding="15,10" Margin="0,15,0,0">
+                        <Grid ColumnDefinitions="Auto, *">
+                            <Label Grid.Column="0" Text="📝 OBSERVACIONES:" FontSize="12" TextColor="Gray" VerticalOptions="Center" WidthRequest="130"/>
+                            <Label Grid.Column="1" Text="{Binding Observaciones}" FontSize="14" TextColor="Black" FontAttributes="Italic" HorizontalOptions="Center"/>
+                        </Grid>
+                    </Border>
 
-                <!-- Recibido y Firma -->
-                <Border Stroke="LightGray" StrokeShape="RoundRectangle 8" Padding="15,10" Margin="0,15,0,0">
-                    <Grid ColumnDefinitions="Auto, *">
-                        <Label Grid.Column="0" Text="👤 RECIBIDO POR:" FontSize="12" TextColor="Gray" VerticalOptions="Center" WidthRequest="130"/>
-                        <Label Grid.Column="1" Text="{Binding Receptor}" FontSize="14" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
-                    </Grid>
-                </Border>
+                    <!-- Recibido y Firma -->
+                    <Border Stroke="LightGray" StrokeShape="RoundRectangle 8" Padding="15,10" Margin="0,15,0,0">
+                        <Grid ColumnDefinitions="Auto, *">
+                            <Label Grid.Column="0" Text="👤 RECIBIDO POR:" FontSize="12" TextColor="Gray" VerticalOptions="Center" WidthRequest="130"/>
+                            <Label Grid.Column="1" Text="{Binding Receptor}" FontSize="14" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Center"/>
+                        </Grid>
+                    </Border>
 
-                <Border Stroke="LightGray" StrokeShape="RoundRectangle 8" Padding="15,10">
-                    <Grid ColumnDefinitions="Auto, *">
-                        <Label Grid.Column="0" Text="🖋️ FIRMA:" FontSize="12" TextColor="Gray" VerticalOptions="Center" WidthRequest="130"/>
-                        <!-- Aquí se renderiza la firma capturada -->
-                        <Image x:Name="FirmaImagen" Grid.Column="1" HeightRequest="60" HorizontalOptions="Center"/>
-                    </Grid>
-                </Border>
+                    <Border Stroke="LightGray" StrokeShape="RoundRectangle 8" Padding="15,10">
+                        <Grid ColumnDefinitions="Auto, *">
+                            <Label Grid.Column="0" Text="🖋️ FIRMA:" FontSize="12" TextColor="Gray" VerticalOptions="Center" WidthRequest="130"/>
+                            <!-- Aquí se renderiza la firma capturada -->
+                            <Image x:Name="FirmaImagen" Grid.Column="1" HeightRequest="60" HorizontalOptions="Center"/>
+                        </Grid>
+                    </Border>
 
-                <!-- Pie de página -->
-                <Label Text="ENTREGA CONFIRMADA" FontSize="12" TextColor="Gray" HorizontalOptions="Center" Margin="0,15,0,0"/>
-                <Label Text="✅" FontSize="24" HorizontalOptions="Center"/>
-                <Label Text="💛 Gracias por confiar en Minué 🐾" FontSize="14" FontAttributes="Bold" TextColor="#8B7355" HorizontalOptions="Center" Margin="0,5,0,0"/>
+                    <!-- Pie de página -->
+                    <Label Text="ENTREGA CONFIRMADA" FontSize="12" TextColor="Gray" HorizontalOptions="Center" Margin="0,15,0,0"/>
+                    <Label Text="✅" FontSize="24" HorizontalOptions="Center"/>
+                    <Label Text="💛 Gracias por confiar en Minué 🐾" FontSize="14" FontAttributes="Bold" TextColor="#8B7355" HorizontalOptions="Center" Margin="0,5,0,0"/>
 
-                <Button Text="Volver al Dashboard" Clicked="OnFinalizarClicked" BackgroundColor="#4A6B4A" TextColor="White" Margin="0,20,0,0" CornerRadius="8"/>
-            </VerticalStackLayout>
+                    <Button Text="Volver al Dashboard" Clicked="OnFinalizarClicked" BackgroundColor="#4A6B4A" TextColor="White" Margin="0,20,0,0" CornerRadius="8"/>
+                </VerticalStackLayout>
 
-        </Border>
-    </ScrollView>
+            </Border>
+        </ScrollView>
+    </Grid>
 </ContentPage>

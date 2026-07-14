@@ -12,11 +12,20 @@ namespace Entregas.MAUI.Views
             InitializeComponent();
         }
 
+        // NUEVO: Se ejecuta cada vez que entras a la pestaña de Historial
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            if (_vm != null)
+            {
+                await _vm.CargarHistorialAsync();
+            }
+        }
+
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            // Evitamos fugas desuscribiendo MessagingCenter
-            _vm?.Unsubscribe();
+            // _vm?.Unsubscribe(); // Comentado para que el historial siga escuchando en segundo plano
         }
     }
 }

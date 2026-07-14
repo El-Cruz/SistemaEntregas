@@ -24,7 +24,6 @@ namespace Entregas.MAUI.ViewModels
         public DashboardViewModel()
         {
             Entregas = new ObservableCollection<EntregaModel>();
-            CargarDatosDePrueba();
 
             // 2. Inicializamos los Comandos y le decimos qué método ejecutar
             NavegarAMapaCommand = new Command<EntregaModel>(async (entrega) => await IniciarNavegacionSatelital(entrega));
@@ -135,42 +134,6 @@ namespace Entregas.MAUI.ViewModels
             {
                 Shell.Current.DisplayAlert("Error de Popup", $"Motivo: {ex.Message}", "OK");
             }
-        }
-
-        private void CargarDatosDePrueba()
-        {
-            Entregas.Clear();
-
-            Entregas.Add(new EntregaModel
-            {
-                Id = 1,
-                CodigoEntrega = "ENT-1042",
-                Destinatario = "Veterinaria Patitas",
-                Direccion = "Av. República y Eloy Alfaro",
-                Estado = 0,
-                Latitud = -0.180653,
-                Longitud = -78.467838,
-                Productos = new List<ProductoEntrega>
-        {
-            new ProductoEntrega { Nombre = "Chicken & Zucchini", Cantidad = 12 },
-            new ProductoEntrega { Nombre = "Beef & Beets", Cantidad = 3 }
-        }
-            });
-
-            Entregas.Add(new EntregaModel
-            {
-                Id = 2,
-                CodigoEntrega = "ENT-1043",
-                Destinatario = "Doggy Care Spa",
-                Direccion = "Av. de los Shyris y Naciones Unidas",
-                Estado = 1,
-                Latitud = -0.1756,
-                Longitud = -78.4799,
-                Productos = new List<ProductoEntrega>
-        {
-            new ProductoEntrega { Nombre = "Renal Forte", Cantidad = 8 }
-        }
-            });
         }
 
         // Optional: permitir que la página llame a esto al salir para evitar memory leaks

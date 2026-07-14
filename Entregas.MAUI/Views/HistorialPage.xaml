@@ -1,49 +1,118 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Entregas.MAUI.ViewModels"
              x:Class="Entregas.MAUI.Views.HistorialPage"
-             Title="Historial de Entregas"
-             BackgroundColor="#F5F5F5">
+             Title="Historial"
+             BackgroundColor="{StaticResource BackgroundPrimary}">
 
     <ContentPage.BindingContext>
         <vm:HistorialViewModel />
     </ContentPage.BindingContext>
 
-    <VerticalStackLayout Padding="12" Spacing="12">
+    <VerticalStackLayout Padding="20" Spacing="16">
 
-        <Label Text="Historial de entregas" FontSize="18" FontAttributes="Bold" TextColor="#212121" />
+        <!-- Encabezado Minimalista -->
+        <Label Text="Entregas Completadas" 
+               Style="{StaticResource HeadingMedium}" 
+               Margin="0,0,0,8" />
 
-        <CollectionView ItemsSource="{Binding Entregas}" SelectionMode="None" BackgroundColor="Transparent">
+        <!-- Lista de historial -->
+        <CollectionView ItemsSource="{Binding Entregas}" 
+                        SelectionMode="None" 
+                        BackgroundColor="Transparent">
+
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" ItemSpacing="12" />
+            </CollectionView.ItemsLayout>
+
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Frame CornerRadius="8" Padding="12" Margin="0,6" BackgroundColor="White" BorderColor="#E0E0E0" HasShadow="True">
-                        <Grid ColumnDefinitions="*, 120" RowDefinitions="Auto, Auto" ColumnSpacing="8">
-                            <StackLayout Grid.Column="0" Spacing="4">
-                                <Label Text="{Binding CodigoEntrega}" FontAttributes="Bold" TextColor="#212121" FontSize="14"/>
-                                <Label Text="{Binding Destinatario}" TextColor="#424242" FontSize="13"/>
-                                <Label Text="{Binding FechaEntrega, StringFormat='Fecha: {0:dd/MM/yyyy HH:mm}'}" TextColor="#757575" FontSize="12"/>
-                            </StackLayout>
+                    <Border StrokeShape="RoundRectangle 16" 
+                            Padding="16" 
+                            BackgroundColor="{StaticResource BackgroundSecondary}" 
+                            Stroke="{StaticResource BorderBrush}"
+                            StrokeThickness="1">
 
-                            <StackLayout Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center" Spacing="6">
-                                <Button Text="Ver comprobante"
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ViewComprobanteCommand}"
-                                        CommandParameter="{Binding .}"
-                                        BackgroundColor="#2196F3"
-                                        TextColor="White"
-                                        CornerRadius="6"
-                                        Padding="8"
-                                        FontSize="12"/>
-                            </StackLayout>
+                        <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto" ColumnSpacing="12">
+
+                            <!-- Información Principal -->
+                            <VerticalStackLayout Grid.Column="0" Spacing="4" VerticalOptions="Center">
+                                <Label Text="{Binding Destinatario}" 
+                                       Style="{StaticResource HeadingSmall}" 
+                                       FontAttributes="Bold"
+                                       LineBreakMode="TailTruncation"
+                                       MaxLines="1"/>
+                                <Label Text="{Binding CodigoEntrega, StringFormat='Ref: {0}'}" 
+                                       Style="{StaticResource BodySmall}" 
+                                       TextColor="{StaticResource TextSecondary}"/>
+                                <Label Text="{Binding FechaEntrega, StringFormat='{0:dd/MM/yyyy • HH:mm}'}" 
+                                       FontSize="12" 
+                                       TextColor="{StaticResource Success}"/>
+                            </VerticalStackLayout>
+
+                            <!-- Botón Ver Comprobante (Minimalista) -->
+                            <Border Grid.Column="1"
+                                    Grid.RowSpan="2"
+                                    StrokeShape="RoundRectangle 6"
+                                    HeightRequest="40"
+                                    WidthRequest="40"
+                                    Padding="0"
+                                    HorizontalOptions="End"
+                                    VerticalOptions="Center"
+                                    Stroke="#999999"
+                                    StrokeThickness="1"
+                                    BackgroundColor="Transparent">              
+
+                                <!-- El SVG traducido a Path nativo de MAUI (Aspect corregido) -->
+                                <Path Stroke="#0077FF"
+                                      StrokeThickness="2"
+                                      StrokeLineJoin="Round"
+                                      StrokeLineCap="Round"
+                                      Fill="Transparent"
+                                      Aspect="Uniform" 
+                                      WidthRequest="20"
+                                      HeightRequest="20"
+                                      HorizontalOptions="Center"
+                                      VerticalOptions="Center"
+                                      Data="M3,5 C3,3.9 3.9,3 5,3 L16,3 L21,8 L21,19 C21,20.1 20.1,21 19,21 L5,21 C3.9,21 3,20.1 3,19 L3,5 Z M7,3 L7,8 L15,8 M17,20 L17,13 L7,13 L7,20" />
+
+                                <!-- Gestor de gestos para que funcione como botón -->
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ViewComprobanteCommand}"
+                                                          CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+
+                                <!-- Efecto Visual CORREGIDO -->
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroupList>
+                                        <VisualStateGroup x:Name="CommonStates">
+                                            <VisualState x:Name="Normal" />
+                                            <VisualState x:Name="PointerOver">
+                                                <VisualState.Setters>
+                                                    <Setter Property="Stroke" Value="#0077FF" />
+                                                    <Setter Property="BackgroundColor" Value="#1A0077FF" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                    </VisualStateGroupList>
+                                </VisualStateManager.VisualStateGroups>
+                            </Border>
                         </Grid>
-                    </Frame>
+                    </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
 
+            <!-- Estado Vacío -->
             <CollectionView.EmptyView>
-                <Label Text="No hay entregas registradas aun." TextColor="#9E9E9E" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" />
+                <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="12" Margin="0,40,0,0">
+                    <Label Text="No hay entregas completadas" 
+                           Style="{StaticResource BodySmall}" 
+                           TextColor="{StaticResource TextSecondary}" 
+                           HorizontalOptions="Center" />
+                </VerticalStackLayout>
             </CollectionView.EmptyView>
-        </CollectionView>
 
+        </CollectionView>
     </VerticalStackLayout>
 </ContentPage>
