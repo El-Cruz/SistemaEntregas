@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:Entregas.MAUI.ViewModels"
+             x:Class="Entregas.MAUI.Views.HistorialPage"
+             Title="Historial de Entregas"
+             BackgroundColor="#F5F5F5">
+
+    <ContentPage.BindingContext>
+        <vm:HistorialViewModel />
+    </ContentPage.BindingContext>
+
+    <VerticalStackLayout Padding="12" Spacing="12">
+
+        <Label Text="Historial de entregas" FontSize="18" FontAttributes="Bold" TextColor="#212121" />
+
+        <CollectionView ItemsSource="{Binding Entregas}" SelectionMode="None" BackgroundColor="Transparent">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame CornerRadius="8" Padding="12" Margin="0,6" BackgroundColor="White" BorderColor="#E0E0E0" HasShadow="True">
+                        <Grid ColumnDefinitions="*, 120" RowDefinitions="Auto, Auto" ColumnSpacing="8">
+                            <StackLayout Grid.Column="0" Spacing="4">
+                                <Label Text="{Binding CodigoEntrega}" FontAttributes="Bold" TextColor="#212121" FontSize="14"/>
+                                <Label Text="{Binding Destinatario}" TextColor="#424242" FontSize="13"/>
+                                <Label Text="{Binding FechaEntrega, StringFormat='Fecha: {0:dd/MM/yyyy HH:mm}'}" TextColor="#757575" FontSize="12"/>
+                            </StackLayout>
+
+                            <StackLayout Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center" Spacing="6">
+                                <Button Text="Ver comprobante"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ViewComprobanteCommand}"
+                                        CommandParameter="{Binding .}"
+                                        BackgroundColor="#2196F3"
+                                        TextColor="White"
+                                        CornerRadius="6"
+                                        Padding="8"
+                                        FontSize="12"/>
+                            </StackLayout>
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+            <CollectionView.EmptyView>
+                <Label Text="No hay entregas registradas aun." TextColor="#9E9E9E" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" />
+            </CollectionView.EmptyView>
+        </CollectionView>
+
+    </VerticalStackLayout>
+</ContentPage>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Entregas.MAUI.ViewModels"
+             x:Class="Entregas.MAUI.Views.DashboardPage"
+             Title="Dashboard de Entregas"
+             BackgroundColor="{StaticResource BackgroundPrimary}">
+
+    <ContentPage.BindingContext>
+        <vm:DashboardViewModel />
+    </ContentPage.BindingContext>
+
+    <Grid RowDefinitions="Auto, *" RowSpacing="0">
+
+        <!-- Encabezado con padding ajustado -->
+        <Label Grid.Row="0" 
+               Text="Pedidos del Día" 
+               Style="{StaticResource HeadingMedium}"
+               Margin="16, 24, 16, 16"/>
+
+        <!-- Lista de entregas -->
+        <CollectionView Grid.Row="1" 
+                        ItemsSource="{Binding Entregas}" 
+                        Margin="0,0,0,16"
+                        RemainingItemsThreshold="5">
+
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" ItemSpacing="8" />
+            </CollectionView.ItemsLayout>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <!-- Tarjeta minimalista -->
+                    <Border StrokeShape="RoundRectangle 16" 
+                Margin="16,4" 
+                Padding="16"
+                Stroke="{StaticResource BorderBrush}"
+                StrokeThickness="1"
+                BackgroundColor="{StaticResource BackgroundSecondary}">
+
+                        <!-- Este Trigger atenúa la tarjeta cuando Estado es 2 (Completado) -->
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border" Binding="{Binding Estado}" Value="2">
+                                <Setter Property="Opacity" Value="0.6" />
+                            </DataTrigger>
+                        </Border.Triggers>
+
+                        <Grid ColumnDefinitions="4, *, 48" ColumnSpacing="12">
+
+                            <!-- Barra lateral que cambia de color según el estado -->
+                            <BoxView Grid.Column="0" 
+                         VerticalOptions="Fill"
+                         CornerRadius="2">
+                                <BoxView.Triggers>
+                                    <DataTrigger TargetType="BoxView" Binding="{Binding Estado}" Value="0">
+                                        <Setter Property="BackgroundColor" Value="{StaticResource Error}"/>
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="BoxView" Binding="{Binding Estado}" Value="1">
+                                        <Setter Property="BackgroundColor" Value="{StaticResource Warning}"/>
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="BoxView" Binding="{Binding Estado}" Value="2">
+                                        <Setter Property="BackgroundColor" Value="{StaticResource Success}"/>
+                                    </DataTrigger>
+                                </BoxView.Triggers>
+                            </BoxView>
+
+                            <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
+                                <Label Text="{Binding Destinatario}" Style="{StaticResource HeadingSmall}" FontAttributes="Bold"/>
+                                <Label Text="{Binding Direccion}" Style="{StaticResource BodySmall}" TextColor="{StaticResource TextSecondary}" MaxLines="1" LineBreakMode="TailTruncation"/>
+                                <Label Text="{Binding Productos.Count, StringFormat='{0} productos'}" FontSize="11" TextColor="{StaticResource TextSecondary}"/>
+                            </VerticalStackLayout>
+
+                            <ImageButton Grid.Column="2" 
+                             Source="map_icon.png" 
+                             WidthRequest="32" HeightRequest="32" 
+                             BackgroundColor="Transparent"
+                             VerticalOptions="Center"
+                             Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.NavegarAMapaCommand}"
+                             CommandParameter="{Binding .}" />
+
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.AbrirDetalleCommand}"
+                                          CommandParameter="{Binding .}" />
+                            </Grid.GestureRecognizers>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>
