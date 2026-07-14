@@ -5,8 +5,10 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Entregas.MAUI.Models;
 using Entregas.MAUI.Services;
+using Entregas.MAUI.Utilities;
 using Microsoft.Maui.Controls;
 
 namespace Entregas.MAUI.ViewModels
@@ -148,6 +150,13 @@ namespace Entregas.MAUI.ViewModels
 
             // 4. GUARDAR EN LA BASE DE DATOS FÍSICA (SQLite)
             await DatabaseService.GuardarEntregaAsync(NuevaEntrega);
+
+            // Notify other parts of the app that a new entrega was created
+            try
+            {
+                WeakReferenceMessenger.Default.Send(new EntregaCreadaMessage(NuevaEntrega));
+            }
+            catch { }
 
             await Shell.Current.DisplayAlert("Éxito", $"Entrega {NuevaEntrega.CodigoEntrega} guardada correctamente.", "OK");
 

@@ -6,10 +6,12 @@ using Microsoft.Maui.Devices.Sensors; // Requerido para ubicación
 using Entregas.MAUI.Models;
 using CommunityToolkit.Maui.Views;
 using Entregas.MAUI.Views;
-using Microsoft.Maui.Controls; // MessagingCenter
+using Microsoft.Maui.Controls; // Shell
 using Microsoft.Maui.Dispatching;
 using Entregas.MAUI.Services;
 using System.Linq;
+using CommunityToolkit.Mvvm.Messaging;
+using Entregas.MAUI.Utilities;
 
 namespace Entregas.MAUI.ViewModels
 {
@@ -17,7 +19,6 @@ namespace Entregas.MAUI.ViewModels
     {
         public ObservableCollection<EntregaModel> Entregas { get; set; }
 
-        // 1. Declaramos el Comando
         public ICommand NavegarAMapaCommand { get; }
         public ICommand? AbrirDetalleCommand { get; private set; }
 
@@ -25,50 +26,45 @@ namespace Entregas.MAUI.ViewModels
         {
             Entregas = new ObservableCollection<EntregaModel>();
 
-            // 2. Inicializamos los Comandos y le decimos qué método ejecutar
             NavegarAMapaCommand = new Command<EntregaModel>(async (entrega) => await IniciarNavegacionSatelital(entrega));
             AbrirDetalleCommand = new Command<EntregaModel>(MostrarPopupDetalle);
 
-            // Subscribirse a mensajes de creación de entrega para actualizar el dashboard automáticamente
+            // Subscribe using CommunityToolkit WeakReferenceMessenger
             try
             {
-                MessagingCenter.Subscribe<CrearEntregaViewModel, EntregaModel>(this, "EntregaCreada", (sender, entrega) =>
+                WeakReferenceMessenger.Default.Register<DashboardViewModel, EntregaCreadaMessage>(this, (r, msg) =>
                 {
-                    // Aseguramos ejecución en hilo UI
                     MainThread.BeginInvokeOnMainThread(() =>
                     {
-                        // Insertamos arriba para visualizar primero las recientes
-                        Entregas.Insert(0, entrega);
+                        var entrega = msg.Value;
+                        if (entrega != null && entrega.Estado != 2)
+                            Entregas.Insert(0, entrega);
                     });
                 });
 
-                // Subscribirse a eventos de concreción/actualización de entrega
-                MessagingCenter.Subscribe<object, EntregaModel>(this, "EntregaConcretada", (sender, entrega) =>
+                WeakReferenceMessenger.Default.Register<DashboardViewModel, EntregaConcretadaMessage>(this, (r, msg) =>
                 {
                     MainThread.BeginInvokeOnMainThread(() =>
                     {
+                        var entrega = msg.Value;
                         if (entrega == null) return;
 
-                        // Buscar por Id la entrega en la colección actual
                         var existente = Entregas.FirstOrDefault(e => e.Id == entrega.Id);
                         if (existente != null)
                         {
-                            // Actualizar propiedades relevantes para que la UI reaccione
+                            // actualizar propiedades para que la UI reaccione
                             existente.Estado = entrega.Estado;
                             existente.Receptor = entrega.Receptor;
                             existente.FirmaBase64 = entrega.FirmaBase64;
                             existente.Observaciones = entrega.Observaciones;
                             existente.Repartidor = entrega.Repartidor;
 
-                            // Si la entrega ya fue concretada (estado 2), removerla del dashboard activo
+                            // eliminar si ya fue concretada
                             if (entrega.Estado == 2)
-                            {
                                 Entregas.Remove(existente);
-                            }
                         }
                         else
                         {
-                            // Si por algún motivo la entrega no existía y no está concretada, añadirla
                             if (entrega.Estado != 2)
                                 Entregas.Insert(0, entrega);
                         }
@@ -77,7 +73,7 @@ namespace Entregas.MAUI.ViewModels
             }
             catch
             {
-                // No bloquear si MessagingCenter no está disponible en algún entorno
+                // No bloquear si Messenger no está disponible
             }
         }
 
@@ -85,18 +81,18 @@ namespace Entregas.MAUI.ViewModels
         {
             var listaDb = await DatabaseService.ObtenerEntregasAsync();
             Entregas.Clear();
-            foreach (var item in listaDb.OrderByDescending(e => e.FechaEntrega)) // Ordenadas por la más reciente
+            foreach (var item in listaDb.OrderByDescending(e => e.FechaEntrega))
             {
-                Entregas.Add(item);
+                // cargar solo las no completadas en el dashboard activo (Estado != 2)
+                if (item.Estado != 2)
+                    Entregas.Add(item);
             }
         }
 
-        // 3. El método de la Parte A, ahora adaptado para recibir el modelo de la entrega
         private async Task IniciarNavegacionSatelital(EntregaModel entrega)
         {
             if (entrega == null) return;
 
-            // Si la latitud y longitud son 0, la API de Google no capturó la ubicación al crearla
             if (entrega.Latitud == 0 && entrega.Longitud == 0)
             {
                 await Shell.Current.DisplayAlert("Ubicación Inválida", "Esta entrega no tiene coordenadas registradas. Asegúrate de buscar el local con el botón 'Buscar' al crear el pedido.", "OK");
@@ -136,13 +132,12 @@ namespace Entregas.MAUI.ViewModels
             }
         }
 
-        // Optional: permitir que la página llame a esto al salir para evitar memory leaks
+        // Unregister messenger handlers to avoid leaks
         public void Unsubscribe()
         {
             try
             {
-                MessagingCenter.Unsubscribe<CrearEntregaViewModel, EntregaModel>(this, "EntregaCreada");
-                MessagingCenter.Unsubscribe<object, EntregaModel>(this, "EntregaConcretada");
+                WeakReferenceMessenger.Default.UnregisterAll(this);
             }
             catch { }
         }

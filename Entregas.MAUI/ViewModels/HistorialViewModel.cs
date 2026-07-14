@@ -1,4 +1,3 @@
-using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Microsoft.Maui.Controls;
@@ -7,6 +6,8 @@ using Entregas.MAUI.Models;
 using Entregas.MAUI.Services; // Agregado para acceder a la BD
 using System.Linq;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Messaging;
+using Entregas.MAUI.Utilities;
 
 namespace Entregas.MAUI.ViewModels
 {
@@ -32,15 +33,14 @@ namespace Entregas.MAUI.ViewModels
 
             RefreshCommand = new Command(async () => await CargarHistorialAsync());
 
-            // Mantenemos las suscripciones en vivo por si la app está abierta
             try
             {
-                MessagingCenter.Subscribe<CrearEntregaViewModel, EntregaModel>(this, "EntregaCreada", async (sender, entrega) =>
+                WeakReferenceMessenger.Default.Register<HistorialViewModel, EntregaCreadaMessage>(this, async (r, msg) =>
                 {
                     await CargarHistorialAsync();
                 });
 
-                MessagingCenter.Subscribe<object, EntregaModel>(this, "EntregaConcretada", async (sender, entrega) =>
+                WeakReferenceMessenger.Default.Register<HistorialViewModel, EntregaConcretadaMessage>(this, async (r, msg) =>
                 {
                     await CargarHistorialAsync();
                 });
@@ -48,14 +48,12 @@ namespace Entregas.MAUI.ViewModels
             catch { }
         }
 
-        // NUEVO: Método que consulta la BD y actualiza la lista
         public async Task CargarHistorialAsync()
         {
             try
             {
                 var entregasDb = await DatabaseService.ObtenerEntregasAsync();
 
-                // Filtramos solo las completadas (Estado == 2) y ordenamos por fecha (más recientes primero)
                 var completadas = entregasDb.Where(e => e.Estado == 2)
                                             .OrderByDescending(e => e.FechaEntrega)
                                             .ToList();
@@ -69,15 +67,14 @@ namespace Entregas.MAUI.ViewModels
                     }
                 });
             }
-            catch { /* Ignorar si falla la carga inicial */ }
+            catch { }
         }
 
         public void Unsubscribe()
         {
             try
             {
-                MessagingCenter.Unsubscribe<CrearEntregaViewModel, EntregaModel>(this, "EntregaCreada");
-                MessagingCenter.Unsubscribe<object, EntregaModel>(this, "EntregaConcretada");
+                WeakReferenceMessenger.Default.UnregisterAll(this);
             }
             catch { }
         }
