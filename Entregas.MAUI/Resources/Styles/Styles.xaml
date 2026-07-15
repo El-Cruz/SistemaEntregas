@@ -59,7 +59,7 @@
                     <VisualState x:Name="Normal" />
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
-                            <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}" />
+                            <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -178,6 +178,12 @@
         <Setter Property="FontSize" Value="32" />
         <Setter Property="HorizontalOptions" Value="Center" />
         <Setter Property="HorizontalTextAlignment" Value="Center" />
+    </Style>
+    
+    <Style TargetType="Label" x:Key="HeadingMedium">
+        <Setter Property="FontSize" Value="18" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="TextColor" Value="{StaticResource Black}" />
     </Style>
 
     <Style TargetType="Label" x:Key="SubHeadline">
@@ -437,4 +443,66 @@
         <Setter Property="SelectedTabColor" Value="{AppThemeBinding Light={StaticResource Gray950}, Dark={StaticResource Gray200}}" />
     </Style>
 
+    <!-- ADICIONES: recursos y estilos faltantes requeridos por las vistas -->
+    <!-- Colores auxiliares (Fijos en Modo Oscuro) -->
+    <Color x:Key="BackgroundSecondary">#1A1A1A</Color>
+    <Color x:Key="TextSecondary">#BDBDBD</Color>
+    <Color x:Key="Error">#CF6679</Color>
+    <!-- Tono de error adaptado para fondos oscuros -->
+    <Color x:Key="Warning">#FFB74D</Color>
+    <Color x:Key="Success">#81C784</Color>
+    <Color x:Key="Gray950">#121212</Color>
+
+    <!-- Brushes (Fijo en Modo Oscuro) -->
+    <SolidColorBrush x:Key="BorderBrush" Color="#2F2F2F"/>
+
+    <!-- Tipografías (Fijas en Modo Oscuro) -->
+    <Style x:Key="HeadingSmall" TargetType="Label">
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <!-- Texto blanco puro para máximo contraste -->
+        <Setter Property="TextColor" Value="#FFFFFF" />
+        <Setter Property="FontFamily" Value="OpenSansSemibold" />
+    </Style>
+
+    <Style x:Key="BodySmall" TargetType="Label">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontFamily" Value="OpenSansRegular" />
+        <!-- Texto gris claro para legibilidad sin cansar la vista -->
+        <Setter Property="TextColor" Value="#E0E0E0" />
+    </Style>
+
+    <!-- Entry style (Fijo en Modo Oscuro) -->
+    <Style x:Key="EntryStyle" TargetType="Entry">
+        <Setter Property="TextColor" Value="#FFFFFF" />
+        <!-- Fondo casi negro para destacar ligeramente sobre el fondo de la página -->
+        <Setter Property="BackgroundColor" Value="#1A1A1A" />
+        <Setter Property="FontFamily" Value="OpenSansRegular"/>
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="PlaceholderColor" Value="#9E9E9E" />
+    </Style>
+
+    <!-- Botones específicos (Fijos en Modo Oscuro) -->
+    <Style x:Key="ButtonPrimary" TargetType="Button">
+        <Setter Property="TextColor" Value="#FFFFFF" />
+        <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+        <Setter Property="FontFamily" Value="OpenSansRegular"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="BorderWidth" Value="0"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="14,10"/>
+        <Setter Property="MinimumHeightRequest" Value="44"/>
+    </Style>
+
+    <Style x:Key="ButtonOutline" TargetType="Button">
+        <Setter Property="TextColor" Value="{StaticResource Primary}" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="BorderWidth" Value="1" />
+        <Setter Property="BorderColor" Value="{StaticResource Primary}" />
+        <Setter Property="FontFamily" Value="OpenSansRegular"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="12,8"/>
+        <Setter Property="MinimumHeightRequest" Value="44"/>
+    </Style>
 </ResourceDictionary>
