@@ -24,7 +24,7 @@ namespace Entregas.MAUI
             builder.Services.AddHttpClient("ApiCliente", client =>
             {
                 // En Android, 'localhost' es 10.0.2.2
-                client.BaseAddress = new Uri("https://192.168.68.55:7070/");
+                client.BaseAddress = new Uri("https://sistemaentregas.onrender.com");
             });
             // Registro de tu servicio de API
             builder.Services.AddSingleton<ApiService>();
