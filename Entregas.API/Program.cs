@@ -37,5 +37,26 @@ using (var scope = app.Services.CreateScope())
     var context = services.GetRequiredService<AppDbContext>(); // Cambiado a AppDbcontext.Database.EnsureCreated();
 }
 
+app.MapGet("/", async (IWebHostEnvironment env) =>
+{
+    // Construimos la ruta exacta dentro del contenedor de Linux
+    var filePath = Path.Combine(env.ContentRootPath, "wwwroot", "index.html");
+
+    // Verificamos si el archivo realmente llegó al servidor
+    if (System.IO.File.Exists(filePath))
+    {
+        var html = await System.IO.File.ReadAllTextAsync(filePath);
+        return Results.Content(html, "text/html");
+    }
+
+    // Si falla, nos mostrará exactamente dónde está buscando
+    return Results.Content(
+        $"<h1>Error 404 Diagnosticado</h1>" +
+        $"<p>La API está funcionando, pero el archivo HTML no se encontró.</p>" +
+        $"<p>Ruta donde se buscó: <b>{filePath}</b></p>",
+        "text/html"
+    );
+});
+
 app.Run();
       
