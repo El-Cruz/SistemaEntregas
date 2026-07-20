@@ -20,8 +20,8 @@ var app = builder.Build();
 // 4. Configurar el entorno de peticiones
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseDefaultFiles();
+    app.UseStaticFiles();
 }
 
 app.UseAuthorization();
