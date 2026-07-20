@@ -1,5 +1,5 @@
 namespace Entregas.MAUI.Views;
-using Entregas.MAUI.Models;
+using Entregas.Shared;
 using Entregas.MAUI.Services;
 
 // Esto le dice a MAUI que reciba el parámetro "Entrega" que enviamos desde el Popup

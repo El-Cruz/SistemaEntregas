@@ -1,5 +1,5 @@
 ﻿using SQLite;
-using Entregas.MAUI.Models;
+using Entregas.Shared;
 
 namespace Entregas.MAUI.Services
 {

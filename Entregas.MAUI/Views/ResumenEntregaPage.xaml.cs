@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using Entregas.MAUI.Models;
+using Entregas.Shared;
 using Entregas.MAUI.Services;
 using Microsoft.Maui.Controls;
 

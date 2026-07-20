@@ -3,7 +3,7 @@ using System.Windows.Input; // Requerido para ICommand
 using System.Threading.Tasks;
 using Microsoft.Maui.ApplicationModel; // Requerido para mapas
 using Microsoft.Maui.Devices.Sensors; // Requerido para ubicación
-using Entregas.MAUI.Models;
+using Entregas.Shared;
 using CommunityToolkit.Maui.Views;
 using Entregas.MAUI.Views;
 using Microsoft.Maui.Controls; // Shell

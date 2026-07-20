@@ -183,7 +183,7 @@
     <Style TargetType="Label" x:Key="HeadingMedium">
         <Setter Property="FontSize" Value="18" />
         <Setter Property="FontAttributes" Value="Bold" />
-        <Setter Property="TextColor" Value="{StaticResource Black}" />
+        <Setter Property="TextColor" Value="{StaticResource Gray300}" />
     </Style>
 
     <Style TargetType="Label" x:Key="SubHeadline">

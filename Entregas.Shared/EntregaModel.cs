@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using SQLite;
 using System.Text.Json;
 
-namespace Entregas.MAUI.Models
+namespace Entregas.Shared
 {
     public class ProductoEntrega
     {

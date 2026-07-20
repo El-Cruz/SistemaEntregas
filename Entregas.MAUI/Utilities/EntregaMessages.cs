@@ -1,5 +1,5 @@
 using CommunityToolkit.Mvvm.Messaging.Messages;
-using Entregas.MAUI.Models;
+using Entregas.Shared;
 
 namespace Entregas.MAUI.Utilities
 {

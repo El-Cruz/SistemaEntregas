@@ -1,5 +1,5 @@
 using CommunityToolkit.Maui.Views;
-using Entregas.MAUI.Models;
+using Entregas.Shared;
 
 namespace Entregas.MAUI.Views;
 

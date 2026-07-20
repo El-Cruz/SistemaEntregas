@@ -6,7 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using Entregas.MAUI.Models;
+using Entregas.Shared;
 using Entregas.MAUI.Services;
 using Entregas.MAUI.Utilities;
 using Microsoft.Maui.Controls;
@@ -16,6 +16,7 @@ namespace Entregas.MAUI.ViewModels
     public class CrearEntregaViewModel : INotifyPropertyChanged
     {
         private readonly GooglePlacesService _googlePlacesService;
+        private readonly ApiService _apiService;
 
         public EntregaModel NuevaEntrega { get; set; }
         public ObservableCollection<string> ProductosDisponibles { get; set; }
@@ -68,8 +69,9 @@ namespace Entregas.MAUI.ViewModels
         public ICommand AddProductoCommand { get; }
         public ICommand RemoveProductoCommand { get; }
 
-        public CrearEntregaViewModel()
+        public CrearEntregaViewModel(ApiService apiService)
         {
+            _apiService = apiService;
             _googlePlacesService = new GooglePlacesService();
             NuevaEntrega = new EntregaModel
             {
@@ -149,7 +151,13 @@ namespace Entregas.MAUI.ViewModels
             NuevaEntrega.Productos = ProductosEnOrden.ToList();
 
             // 4. GUARDAR EN LA BASE DE DATOS FÍSICA (SQLite)
-            await DatabaseService.GuardarEntregaAsync(NuevaEntrega);
+            bool exito = await _apiService.GuardarEntregaAsync(NuevaEntrega);
+
+            if (!exito)
+            {
+                await Shell.Current.DisplayAlert("Error", "No se pudo conectar con el servidor. Verifica tu conexión.", "OK");
+                return;
+            }
 
             // Notify other parts of the app that a new entrega was created
             try

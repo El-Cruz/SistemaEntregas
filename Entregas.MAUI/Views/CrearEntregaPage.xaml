@@ -6,9 +6,7 @@
              Title="Crear Entrega"
              BackgroundColor="{StaticResource BackgroundPrimary}">
 
-    <ContentPage.BindingContext>
-        <vm:CrearEntregaViewModel />
-    </ContentPage.BindingContext>
+    
 
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="24">
@@ -25,11 +23,29 @@
 
             <!-- Datos -->
             <VerticalStackLayout Spacing="16">
-                <Label Text="Destinatario" Style="{StaticResource BodySmall}" FontAttributes="Bold"/>
-                <Entry Text="{Binding NuevaEntrega.Destinatario, Mode=TwoWay}" 
-                       Placeholder="Nombre del local"
-                       TextChanged="OnDestinatarioTextChanged"
-                       Style="{StaticResource EntryStyle}"/>
+
+                <!-- INPUT ANIMADO: Destinatario -->
+                <Grid Margin="0,10,0,0">
+                    <Border x:Name="DestinatarioBorder" Stroke="#9e9e9e" StrokeThickness="1.5" StrokeShape="RoundRectangle 16" BackgroundColor="Transparent" HeightRequest="56">
+                        <Entry x:Name="DestinatarioEntry" 
+                               Text="{Binding NuevaEntrega.Destinatario, Mode=TwoWay}" 
+                               TextChanged="OnDestinatarioTextChanged"
+                               Focused="Destinatario_Focused"
+                               Unfocused="Destinatario_Unfocused"
+                               Style="{StaticResource EntryStyle}"
+                               BackgroundColor="Transparent"
+                               Margin="12,0"/>
+                    </Border>
+                    <Label x:Name="DestinatarioLabel" 
+                           Text="Nombre del local" 
+                           InputTransparent="True" 
+                           BackgroundColor="{StaticResource BackgroundPrimary}" 
+                           TextColor="#e8e8e8" 
+                           HorizontalOptions="Start" 
+                           VerticalOptions="Center" 
+                           Margin="16,0" 
+                           Padding="4,0" />
+                </Grid>
 
                 <CollectionView ItemsSource="{Binding AutocompleteSuggestions}" BackgroundColor="Transparent" SelectionMode="Single">
                     <CollectionView.ItemTemplate>
@@ -43,27 +59,66 @@
                     </CollectionView.ItemTemplate>
                 </CollectionView>
 
-                <Label Text="Dirección" Style="{StaticResource BodySmall}" FontAttributes="Bold"/>
-                <Grid ColumnDefinitions="*, Auto" ColumnSpacing="8">
-                    <Entry x:Name="DireccionEntry"
-                           Text="{Binding NuevaEntrega.Direccion}" 
-                           Placeholder="Buscar dirección..."
-                           Style="{StaticResource EntryStyle}"/>
+                <!-- INPUT ANIMADO: Dirección -->
+                <Grid ColumnDefinitions="*, Auto" ColumnSpacing="8" Margin="0,10,0,0">
+                    <Grid Grid.Column="0">
+                        <Border x:Name="DireccionBorder" Stroke="#9e9e9e" StrokeThickness="1.5" StrokeShape="RoundRectangle 16" BackgroundColor="Transparent" HeightRequest="56">
+                            <Entry x:Name="DireccionEntry"
+                                   Text="{Binding NuevaEntrega.Direccion}" 
+                                   Focused="Direccion_Focused"
+                                   Unfocused="Direccion_Unfocused"
+                                   Style="{StaticResource EntryStyle}"
+                                   BackgroundColor="Transparent"
+                                   Margin="12,0"/>
+                        </Border>
+                        <Label x:Name="DireccionLabel" 
+                               Text="Buscar dirección..." 
+                               InputTransparent="True" 
+                               BackgroundColor="{StaticResource BackgroundPrimary}" 
+                               TextColor="#e8e8e8" 
+                               HorizontalOptions="Start" 
+                               VerticalOptions="Center" 
+                               Margin="16,0" 
+                               Padding="4,0" />
+                    </Grid>
                     <Button Grid.Column="1" Text="Buscar" Command="{Binding BuscarCoordenadasCommand}" CommandParameter="{Binding Source={x:Reference DireccionEntry}, Path=Text}" Style="{StaticResource ButtonOutline}"/>
                 </Grid>
             </VerticalStackLayout>
 
             <!-- Productos -->
             <VerticalStackLayout Spacing="12">
-                
 
-                <!-- SECCION AGREGAR PRODUCTO (MANTENIDA) -->
+                <!-- SECCION AGREGAR PRODUCTO -->
                 <Border StrokeShape="RoundRectangle 8" Padding="12" BackgroundColor="{StaticResource BackgroundSecondary}">
                     <VerticalStackLayout Spacing="8">
                         <Label Text="Agregar producto" FontAttributes="Bold" FontSize="14"/>
-                        <Grid ColumnDefinitions="*, 80" RowDefinitions="Auto, Auto" ColumnSpacing="8" RowSpacing="8">
+                        <Grid ColumnDefinitions="*, 90" RowDefinitions="Auto, Auto" ColumnSpacing="8" RowSpacing="16">
+
                             <Picker Grid.Row="0" Grid.Column="0" Title="Seleccionar producto" ItemsSource="{Binding ProductosDisponibles}" SelectedItem="{Binding SelectedProducto}"/>
-                            <Entry Grid.Row="0" Grid.Column="1" Keyboard="Numeric" Text="{Binding CantidadTexto}" Placeholder="Cant."/>
+
+                            <!-- INPUT ANIMADO: Cantidad -->
+                            <Grid Grid.Row="0" Grid.Column="1">
+                                <Border x:Name="CantidadBorder" Stroke="#9e9e9e" StrokeThickness="1.5" StrokeShape="RoundRectangle 16" BackgroundColor="Transparent" HeightRequest="44">
+                                    <Entry x:Name="CantidadEntry" 
+                                           Keyboard="Numeric" 
+                                           Text="{Binding CantidadTexto}" 
+                                           Focused="Cantidad_Focused"
+                                           Unfocused="Cantidad_Unfocused"
+                                           Style="{StaticResource EntryStyle}"
+                                           BackgroundColor="Transparent"
+                                           Margin="8,0"/>
+                                </Border>
+                                <Label x:Name="CantidadLabel" 
+                                       Text="Cant." 
+                                       InputTransparent="True" 
+                                       BackgroundColor="{StaticResource BackgroundSecondary}" 
+                                       TextColor="#e8e8e8" 
+                                       HorizontalOptions="Start" 
+                                       VerticalOptions="Center" 
+                                       Margin="10,0" 
+                                       Padding="4,0" />
+                            </Grid>
+
                             <Button Grid.Row="1" Grid.Column="1" Text="Agregar" Command="{Binding AddProductoCommand}" Style="{StaticResource ButtonPrimary}"/>
                         </Grid>
                     </VerticalStackLayout>
@@ -81,7 +136,7 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-                
+
             </VerticalStackLayout>
 
             <Button Text="Guardar Entrega" Command="{Binding GuardarEntregaCommand}" Style="{StaticResource ButtonPrimary}" Margin="0,10,0,20"/>

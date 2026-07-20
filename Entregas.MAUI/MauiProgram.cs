@@ -1,5 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
-using CommunityToolkit.Maui; // 1. ASEGÚRATE DE TENER ESTA LÍNEA
+﻿using CommunityToolkit.Maui;
+using Entregas.MAUI.Services;
+using Entregas.MAUI.ViewModels;
+using Entregas.MAUI.Views;
+using Microsoft.Extensions.Http;
+using Microsoft.Extensions.Logging;
 
 namespace Entregas.MAUI
 {
@@ -16,6 +20,17 @@ namespace Entregas.MAUI
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
+
+            builder.Services.AddHttpClient("ApiCliente", client =>
+            {
+                // En Android, 'localhost' es 10.0.2.2
+                client.BaseAddress = new Uri("https://192.168.68.55:7070/");
+            });
+            // Registro de tu servicio de API
+            builder.Services.AddSingleton<ApiService>();
+            builder.Services.AddTransient<CrearEntregaViewModel>();
+            builder.Services.AddTransient<CrearEntregaPage>();
+            builder.Services.AddTransient<CrearEntregaViewModel>();
 
 #if DEBUG
             builder.Logging.AddDebug();

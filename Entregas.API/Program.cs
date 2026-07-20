@@ -1,15 +1,23 @@
+using Entregas.API.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// 1. Configurar la Base de Datos
+// Utilizaremos una base de datos local temporal para la API por el momento
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite("Data Source=entregas_backend.db"));
 
+// 2. Agregar soporte para Controladores
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+// 3. Configurar Swagger (para probar la API visualmente)
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// 4. Configurar el entorno de peticiones
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -17,7 +25,14 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseAuthorization();
+app.MapControllers(); // Mapear las rutas de nuestros controladores
 
-app.MapControllers();
+// Aplicar migraciones y crear la base de datos automáticamente
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<AppDbContext>(); // Cambiado a AppDbcontext.Database.EnsureCreated();
+}
 
 app.Run();
+      

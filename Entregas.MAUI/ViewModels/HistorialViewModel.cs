@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Dispatching;
-using Entregas.MAUI.Models;
+using Entregas.Shared;
 using Entregas.MAUI.Services; // Agregado para acceder a la BD
 using System.Linq;
 using System.Threading.Tasks;
