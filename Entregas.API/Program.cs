@@ -57,6 +57,23 @@ app.MapGet("/", async (IWebHostEnvironment env) =>
         "text/html"
     );
 });
+// Aplicar migraciones automáticamente al arrancar
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<AppDbContext>(); // Cambia TuDbContext por tu clase
+        context.Database.Migrate(); // Esto crea las tablas usando tus migraciones de Entity Framework
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Ocurrió un error al migrar la base de datos.");
+    }
+}
+
+app.Run();
 
 app.Run();
       
