@@ -20,7 +20,10 @@ var app = builder.Build();
 // 4. Configurar el entorno de peticiones
 if (app.Environment.IsDevelopment())
 {
-    app.UseDefaultFiles();
+    app.UseDefaultFiles(new DefaultFilesOptions
+    {
+        DefaultFileNames = new List<string> { "index.html" }
+    });
     app.UseStaticFiles();
 }
 

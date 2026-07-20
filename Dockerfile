@@ -9,8 +9,8 @@ RUN dotnet restore "Entregas.API/Entregas.API.csproj"
 
 # Copiamos todo el código y compilamos
 COPY . .
-WORKDIR "/src/Entregas.API"
-RUN dotnet publish "Entregas.API.csproj" -c Release -o /app/publish
+WORKDIR "/src" 
+RUN dotnet publish "Entregas.API/Entregas.API.csproj" -c Release -o /app/publish
 
 # Etapa de ejecución
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
